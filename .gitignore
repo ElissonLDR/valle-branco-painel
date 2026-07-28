@@ -1,0 +1,7 @@
+# Ignorar arquivos locais
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+_smoke-test.php

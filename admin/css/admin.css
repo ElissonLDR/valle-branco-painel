@@ -1,0 +1,466 @@
+/* Painel Valle — dashboard */
+:root {
+	--vb-p-navy: #0a3c6b;
+	--vb-p-navy-deep: #062d52;
+	--vb-p-navy-soft: #e8eef5;
+	--vb-p-gold: #91805b;
+	--vb-p-gold-soft: #f3efe6;
+	--vb-p-beige: #d2c9b9;
+	--vb-p-cream: #faf9f8;
+	--vb-p-slate: #1e2f3f;
+	--vb-p-muted: #5c6b7a;
+	--vb-p-line: #e4e7eb;
+	--vb-p-card: #ffffff;
+	--vb-p-radius: 14px;
+	--vb-p-gutter: 24px;
+	--vb-p-shadow: 0 1px 2px rgba(10, 60, 107, 0.04), 0 8px 24px rgba(10, 60, 107, 0.06);
+	--vb-p-shadow-hover: 0 4px 12px rgba(10, 60, 107, 0.1), 0 16px 32px rgba(10, 60, 107, 0.08);
+}
+
+/* Neutraliza padding assimétrico do WP e aplica gutter igual */
+body.toplevel_page_vb-painel #wpcontent {
+	padding-left: 0;
+}
+
+body.toplevel_page_vb-painel #wpbody-content {
+	padding-bottom: 24px;
+	float: none;
+}
+
+/* Largura completa + espaçamento lateral padronizado */
+.vb-painel.wrap {
+	margin: 20px 0 28px;
+	padding-left: var(--vb-p-gutter);
+	padding-right: var(--vb-p-gutter);
+	max-width: none;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.vb-painel h1,
+.vb-painel h2,
+.vb-painel h3 {
+	color: var(--vb-p-slate);
+	font-weight: 600;
+}
+
+.vb-painel__welcome .vb-painel__hello {
+	color: #ffffff;
+}
+
+/* —— Intro (acima do welcome) —— */
+.vb-painel__intro {
+	margin-bottom: 18px;
+}
+
+.vb-painel__section-title {
+	margin: 0 0 6px;
+	font-size: clamp(1.45rem, 2vw, 1.75rem);
+	line-height: 1.25;
+	color: var(--vb-p-slate);
+	font-weight: 700;
+}
+
+.vb-painel__section-lead {
+	margin: 0;
+	font-size: 15px;
+	color: var(--vb-p-muted);
+	line-height: 1.5;
+	max-width: 52em;
+}
+
+/* —— Welcome —— */
+.vb-painel__welcome {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--vb-p-radius);
+	background:
+		radial-gradient(ellipse 70% 100% at 88% 50%, rgba(145, 128, 91, 0.22) 0%, transparent 55%),
+		linear-gradient(135deg, var(--vb-p-navy) 0%, var(--vb-p-navy-deep) 55%, #041f3a 100%);
+	color: #ffffff;
+	box-shadow: var(--vb-p-shadow);
+	margin-bottom: 28px;
+}
+
+/* Círculos decorativos — canto direito */
+.vb-painel__orbs {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+	overflow: hidden;
+}
+
+.vb-painel__orb {
+	position: absolute;
+	border-radius: 50%;
+	box-sizing: border-box;
+}
+
+.vb-painel__orb--1 {
+	width: 220px;
+	height: 220px;
+	right: -48px;
+	top: 50%;
+	transform: translateY(-50%);
+	background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.14) 0%, rgba(145, 128, 91, 0.18) 45%, transparent 70%);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	animation: vb-orb-drift 12s ease-in-out infinite;
+}
+
+.vb-painel__orb--2 {
+	width: 120px;
+	height: 120px;
+	right: 140px;
+	top: 12px;
+	background: rgba(145, 128, 91, 0.22);
+	border: 1px solid rgba(210, 201, 185, 0.35);
+	animation: vb-orb-float 8s ease-in-out infinite;
+}
+
+.vb-painel__orb--3 {
+	width: 64px;
+	height: 64px;
+	right: 72px;
+	bottom: 18px;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	animation: vb-orb-float 9s ease-in-out infinite reverse;
+	animation-delay: -2s;
+}
+
+.vb-painel__orb--4 {
+	width: 28px;
+	height: 28px;
+	right: 210px;
+	bottom: 36px;
+	background: rgba(210, 201, 185, 0.45);
+	animation: vb-orb-pulse 5s ease-in-out infinite;
+}
+
+.vb-painel__orb--5 {
+	width: 16px;
+	height: 16px;
+	right: 250px;
+	top: 42px;
+	background: rgba(255, 255, 255, 0.35);
+	animation: vb-orb-pulse 6s ease-in-out infinite;
+	animation-delay: -1.5s;
+}
+
+.vb-painel__orb--ring {
+	width: 168px;
+	height: 168px;
+	right: 36px;
+	top: 50%;
+	transform: translateY(-50%);
+	background: transparent;
+	border: 2px solid rgba(145, 128, 91, 0.45);
+	animation: vb-orb-spin 22s linear infinite;
+}
+
+.vb-painel__welcome-inner {
+	position: relative;
+	z-index: 1;
+	padding: 28px 32px 30px;
+	max-width: min(42em, calc(100% - 200px));
+}
+
+@keyframes vb-orb-float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-10px); }
+}
+
+@keyframes vb-orb-drift {
+	0%, 100% { transform: translateY(-50%) scale(1); }
+	50% { transform: translateY(calc(-50% - 8px)) scale(1.04); }
+}
+
+@keyframes vb-orb-pulse {
+	0%, 100% { opacity: 0.55; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes vb-orb-spin {
+	from { transform: translateY(-50%) rotate(0deg); }
+	to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.vb-painel__eyebrow {
+	display: inline-block;
+	margin: 0 0 10px;
+	padding: 4px 10px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #ffffff;
+	background: rgba(0, 0, 0, 0.22);
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	border-radius: 999px;
+}
+
+.vb-painel__hello {
+	margin: 0 0 10px;
+	padding: 0;
+	font-size: clamp(1.85rem, 3vw, 2.45rem);
+	line-height: 1.2;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.vb-painel__welcome-text {
+	margin: 0 0 16px;
+	font-size: 15px;
+	line-height: 1.55;
+	font-weight: 400;
+	color: #ffffff;
+	opacity: 0.95;
+	max-width: 42em;
+}
+
+.vb-painel__date {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	font-size: 13px;
+	font-weight: 500;
+	color: #ffffff;
+	opacity: 0.9;
+}
+
+.vb-painel__date .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	opacity: 1;
+	color: #ffffff;
+}
+
+/* —— Grid —— */
+.vb-painel__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 16px;
+}
+
+/* —— Cards —— */
+.vb-painel-card {
+	display: flex;
+	flex-direction: column;
+	background: var(--vb-p-card);
+	border: 1px solid var(--vb-p-line);
+	border-radius: var(--vb-p-radius);
+	padding: 20px;
+	box-shadow: var(--vb-p-shadow);
+	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	min-height: 220px;
+}
+
+.vb-painel-card:hover {
+	transform: translateY(-3px);
+	box-shadow: var(--vb-p-shadow-hover);
+	border-color: #cfd6de;
+}
+
+.vb-painel-card__top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+.vb-painel-card__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	background: var(--vb-p-navy-soft);
+	color: var(--vb-p-navy);
+	flex-shrink: 0;
+}
+
+.vb-painel-card__icon .dashicons {
+	font-size: 22px;
+	width: 22px;
+	height: 22px;
+	line-height: 1;
+}
+
+.vb-painel-card__badge {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0;
+	font-size: 11px;
+	line-height: 1.2;
+	color: var(--vb-p-muted);
+	text-align: right;
+}
+
+.vb-painel-card__badge strong {
+	font-size: 1.35rem;
+	font-weight: 700;
+	color: var(--vb-p-navy);
+	letter-spacing: -0.02em;
+	line-height: 1.1;
+}
+
+.vb-painel-card__title {
+	margin: 0 0 8px;
+	font-size: 1.25rem;
+	line-height: 1.3;
+	font-weight: 700;
+}
+
+.vb-painel-card__desc {
+	margin: 0 0 18px;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--vb-p-muted);
+	flex: 1;
+}
+
+.vb-painel-card__cta {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	align-self: stretch;
+	margin-top: auto;
+	padding: 10px 14px;
+	font-size: 13px;
+	font-weight: 600;
+	text-decoration: none;
+	color: #fff;
+	background: var(--vb-p-navy);
+	border: 1px solid var(--vb-p-navy);
+	border-radius: 10px;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.vb-painel-card__cta .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	transition: transform 0.15s ease;
+}
+
+.vb-painel-card__cta:hover,
+.vb-painel-card__cta:focus {
+	background: var(--vb-p-navy-deep);
+	border-color: var(--vb-p-navy-deep);
+	color: #fff;
+	outline: none;
+}
+
+.vb-painel-card__cta:hover .dashicons,
+.vb-painel-card__cta:focus .dashicons {
+	transform: translateX(3px);
+}
+
+.vb-painel-card__cta:focus-visible {
+	box-shadow: 0 0 0 3px rgba(145, 128, 91, 0.45);
+}
+
+/* Acentos por card (ícone) */
+.vb-painel-card--onde-encontrar .vb-painel-card__icon {
+	background: #eef6f1;
+	color: #1a6b4a;
+}
+
+.vb-painel-card--hero-sliders .vb-painel-card__icon {
+	background: var(--vb-p-gold-soft);
+	color: var(--vb-p-gold);
+}
+
+.vb-painel-card--produtos .vb-painel-card__icon {
+	background: #eef2f8;
+	color: #3d5a80;
+}
+
+.vb-painel-card--usuarios .vb-painel-card__icon {
+	background: #f5f0eb;
+	color: #7a6548;
+}
+
+.vb-painel-card--atualizacoes .vb-painel-card__icon {
+	background: #fff4e8;
+	color: #c05600;
+}
+
+.vb-painel-card--atualizacoes .vb-painel-card__badge strong {
+	color: #c05600;
+}
+
+/* —— Responsive —— */
+@media (max-width: 960px) {
+	.vb-painel__welcome-inner {
+		max-width: none;
+	}
+
+	.vb-painel__orb--2,
+	.vb-painel__orb--4,
+	.vb-painel__orb--5 {
+		opacity: 0.55;
+	}
+}
+
+@media (max-width: 782px) {
+	:root {
+		--vb-p-gutter: 16px;
+	}
+
+	body.toplevel_page_vb-painel #wpcontent {
+		padding-left: 0;
+	}
+
+	.vb-painel.wrap {
+		margin-top: 16px;
+		margin-bottom: 24px;
+	}
+
+	.vb-painel__welcome-inner {
+		padding: 22px 20px 24px;
+		max-width: none;
+	}
+
+	.vb-painel__orbs {
+		opacity: 0.45;
+	}
+
+	.vb-painel__orb--1 {
+		width: 160px;
+		height: 160px;
+		right: -60px;
+	}
+
+	.vb-painel__orb--ring {
+		width: 120px;
+		height: 120px;
+		right: 8px;
+	}
+
+	.vb-painel__grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+	.vb-painel-card,
+	.vb-painel-card__cta,
+	.vb-painel-card__cta .dashicons,
+	.vb-painel__orb {
+		transition: none;
+		animation: none !important;
+	}
+
+	.vb-painel-card:hover {
+		transform: none;
+	}
+}

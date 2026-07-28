@@ -1,0 +1,78 @@
+/* Barra superior — marca do painel (substitui o logo WP) */
+#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item {
+	padding: 0 12px 0 8px !important;
+	font-weight: 600 !important;
+	color: #f0f0f1 !important;
+}
+
+#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item .ab-icon {
+	float: left;
+	width: auto;
+	height: auto;
+	margin-right: 6px;
+	padding: 6px 0;
+	font: normal 18px/1 dashicons !important;
+	speak: never;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-image: none !important;
+}
+
+#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item .ab-icon:before {
+	content: "\f111";
+	content: "\f111" / "";
+	top: 2px;
+	color: rgba(240, 246, 252, 0.85);
+	speak: never;
+}
+
+#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item .ab-label {
+	display: inline-block;
+	height: 32px;
+	line-height: 32px;
+	font-size: 13px;
+	font-weight: 600;
+	color: inherit;
+}
+
+#wpadminbar #wp-admin-bar-vb-painel-brand:hover > .ab-item,
+#wpadminbar #wp-admin-bar-vb-painel-brand.hover > .ab-item,
+#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item:focus {
+	background: rgba(255, 255, 255, 0.06) !important;
+	color: #fff !important;
+}
+
+#wpadminbar #wp-admin-bar-vb-painel-brand:hover > .ab-item .ab-icon:before,
+#wpadminbar #wp-admin-bar-vb-painel-brand.hover > .ab-item .ab-icon:before,
+#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item:focus .ab-icon:before {
+	color: #fff;
+}
+
+/* Garante que o nó antigo do logo não apareça se algum plugin recriar */
+#wpadminbar #wp-admin-bar-wp-logo {
+	display: none !important;
+}
+
+@media screen and (max-width: 782px) {
+	#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item {
+		padding: 0 10px !important;
+	}
+
+	#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item .ab-icon {
+		padding: 0;
+		margin-right: 6px;
+		font-size: 22px !important;
+		line-height: 46px !important;
+	}
+
+	#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item .ab-icon:before {
+		top: 0;
+		line-height: 46px;
+	}
+
+	#wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item .ab-label {
+		height: 46px;
+		line-height: 46px;
+		font-size: 13px;
+	}
+}
