@@ -26,8 +26,9 @@ class VB_Painel_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_global' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_admin_bar_front' ) );
 		add_action( 'init', array( $this, 'disable_default_wp_logo' ), 20 );
-		add_action( 'admin_bar_menu', array( $this, 'replace_wp_logo' ), 999 );
-		add_action( 'wp_before_admin_bar_render', array( $this, 'force_remove_wp_logo' ) );
+		// Prioridade baixa = entra cedo na barra (canto esquerdo).
+		add_action( 'admin_bar_menu', array( $this, 'replace_wp_logo' ), 0 );
+		add_action( 'wp_before_admin_bar_render', array( $this, 'force_brand_first' ), 0 );
 		add_action( 'load-index.php', array( $this, 'redirect_default_dashboard' ) );
 		add_filter( 'login_redirect', array( $this, 'login_redirect' ), 10, 3 );
 	}
@@ -82,24 +83,27 @@ class VB_Painel_Admin {
 
 		$wp_admin_bar->add_node(
 			array(
-				'id'    => 'vb-painel-brand',
-				'title' => $title,
-				'href'  => admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
-				'meta'  => array(
+				'id'     => 'vb-painel-brand',
+				'parent' => false,
+				'title'  => $title,
+				'href'   => admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
+				'meta'   => array(
 					'class' => 'vb-admin-bar-brand',
 					'title' => __( 'Ir para o Painel de Configurações', 'valle-branco-painel' ),
 				),
 			)
 		);
+
+		$this->move_brand_to_first( $wp_admin_bar );
 	}
 
 	/**
-	 * Garante remoção do logo WP imediatamente antes de renderizar a barra.
+	 * Garante marca no lugar do logo WP e em primeiro na barra.
 	 */
-	public function force_remove_wp_logo() {
+	public function force_brand_first() {
 		global $wp_admin_bar;
 
-		if ( ! $wp_admin_bar instanceof WP_Admin_Bar ) {
+		if ( ! is_user_logged_in() || ! ( $wp_admin_bar instanceof WP_Admin_Bar ) ) {
 			return;
 		}
 
@@ -107,6 +111,38 @@ class VB_Painel_Admin {
 
 		if ( ! $wp_admin_bar->get_node( 'vb-painel-brand' ) ) {
 			$this->replace_wp_logo( $wp_admin_bar );
+			return;
+		}
+
+		$this->move_brand_to_first( $wp_admin_bar );
+	}
+
+	/**
+	 * Coloca o nó da marca como primeiro item da barra.
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar Admin bar.
+	 */
+	private function move_brand_to_first( $wp_admin_bar ) {
+		if ( ! $wp_admin_bar->get_node( 'vb-painel-brand' ) ) {
+			return;
+		}
+
+		try {
+			$ref  = new ReflectionClass( $wp_admin_bar );
+			$prop = $ref->getProperty( 'nodes' );
+			$prop->setAccessible( true );
+			$nodes = $prop->getValue( $wp_admin_bar );
+
+			if ( ! is_array( $nodes ) || ! isset( $nodes['vb-painel-brand'] ) ) {
+				return;
+			}
+
+			$brand = $nodes['vb-painel-brand'];
+			unset( $nodes['vb-painel-brand'] );
+			$nodes = array_merge( array( 'vb-painel-brand' => $brand ), $nodes );
+			$prop->setValue( $wp_admin_bar, $nodes );
+		} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+			// CSS de fallback mantém a ordem visual.
 		}
 	}
 
@@ -154,7 +190,7 @@ class VB_Painel_Admin {
 		wp_enqueue_style(
 			'vb-painel-admin-bar',
 			VB_PAINEL_URL . 'admin/css/admin-bar.css',
-			array(),
+			array( 'admin-bar' ),
 			VB_PAINEL_VERSION
 		);
 	}
@@ -170,7 +206,7 @@ class VB_Painel_Admin {
 		wp_enqueue_style(
 			'vb-painel-admin-bar',
 			VB_PAINEL_URL . 'admin/css/admin-bar.css',
-			array(),
+			array( 'admin-bar' ),
 			VB_PAINEL_VERSION
 		);
 	}

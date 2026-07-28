@@ -1,4 +1,18 @@
-/* Barra superior — marca do painel (substitui o logo WP) */
+/* Barra superior — marca do painel sempre à esquerda (1º item) */
+#wpadminbar ul#wp-admin-bar-root-default {
+	display: flex !important;
+	align-items: stretch;
+	flex-wrap: wrap;
+}
+
+#wpadminbar #wp-admin-bar-vb-painel-brand {
+	order: -9999 !important;
+}
+
+#wpadminbar #wp-admin-bar-menu-toggle {
+	order: -10000 !important;
+}
+
 #wpadminbar #wp-admin-bar-vb-painel-brand > .ab-item {
 	padding: 0 12px 0 8px !important;
 	font-weight: 600 !important;
@@ -48,7 +62,7 @@
 	color: #fff;
 }
 
-/* Garante que o nó antigo do logo não apareça se algum plugin recriar */
+/* Esconde o logo WP se algum plugin recriar */
 #wpadminbar #wp-admin-bar-wp-logo {
 	display: none !important;
 }
