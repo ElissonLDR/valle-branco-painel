@@ -383,6 +383,11 @@ body.toplevel_page_vb-painel #wpbody-content {
 	color: #3d5a80;
 }
 
+.vb-painel-card--faq .vb-painel-card__icon {
+	background: #eef6fb;
+	color: #0a3c6b;
+}
+
 .vb-painel-card--usuarios .vb-painel-card__icon {
 	background: #f5f0eb;
 	color: #7a6548;

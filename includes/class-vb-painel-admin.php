@@ -304,6 +304,17 @@ class VB_Painel_Admin {
 				'cap'         => 'edit_posts',
 			),
 			array(
+				'id'          => 'faq',
+				'title'       => __( 'FAQ', 'valle-branco-painel' ),
+				'description' => __( 'Gerencie perguntas, respostas e categorias da FAQ do site.', 'valle-branco-painel' ),
+				'icon'        => 'dashicons-editor-help',
+				'url'         => admin_url( 'edit.php?post_type=pf_faq' ),
+				'cta'         => __( 'Gerenciar FAQ', 'valle-branco-painel' ),
+				'count'       => $this->count_published( 'pf_faq' ),
+				'count_label' => __( 'perguntas', 'valle-branco-painel' ),
+				'cap'         => 'edit_posts',
+			),
+			array(
 				'id'          => 'onde-encontrar',
 				'title'       => __( 'Mapa', 'valle-branco-painel' ),
 				'description' => __( 'Gerencie estabelecimentos, produtos no mapa e pontos de venda.', 'valle-branco-painel' ),
