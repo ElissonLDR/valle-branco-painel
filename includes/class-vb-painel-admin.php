@@ -25,9 +25,18 @@ class VB_Painel_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_global' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_admin_bar_front' ) );
-		add_action( 'admin_bar_menu', array( $this, 'replace_wp_logo' ), 11 );
+		add_action( 'init', array( $this, 'disable_default_wp_logo' ), 20 );
+		add_action( 'admin_bar_menu', array( $this, 'replace_wp_logo' ), 999 );
+		add_action( 'wp_before_admin_bar_render', array( $this, 'force_remove_wp_logo' ) );
 		add_action( 'load-index.php', array( $this, 'redirect_default_dashboard' ) );
 		add_filter( 'login_redirect', array( $this, 'login_redirect' ), 10, 3 );
+	}
+
+	/**
+	 * Impede o menu padrão do logo WP de ser registrado.
+	 */
+	public function disable_default_wp_logo() {
+		remove_action( 'admin_bar_menu', 'wp_admin_bar_wp_menu', 10 );
 	}
 
 	/**
@@ -60,6 +69,10 @@ class VB_Painel_Admin {
 	 * @param WP_Admin_Bar $wp_admin_bar Admin bar.
 	 */
 	public function replace_wp_logo( $wp_admin_bar ) {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
 		$wp_admin_bar->remove_node( 'wp-logo' );
 
 		$title = sprintf(
@@ -78,6 +91,23 @@ class VB_Painel_Admin {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Garante remoção do logo WP imediatamente antes de renderizar a barra.
+	 */
+	public function force_remove_wp_logo() {
+		global $wp_admin_bar;
+
+		if ( ! $wp_admin_bar instanceof WP_Admin_Bar ) {
+			return;
+		}
+
+		$wp_admin_bar->remove_node( 'wp-logo' );
+
+		if ( ! $wp_admin_bar->get_node( 'vb-painel-brand' ) ) {
+			$this->replace_wp_logo( $wp_admin_bar );
+		}
 	}
 
 	/**
@@ -205,28 +235,6 @@ class VB_Painel_Admin {
 	private function get_cards() {
 		$cards = array(
 			array(
-				'id'          => 'posts',
-				'title'       => __( 'Artigos/Receitas', 'valle-branco-painel' ),
-				'description' => __( 'Publique e edite artigos, receitas e conteúdos do site.', 'valle-branco-painel' ),
-				'icon'        => 'dashicons-admin-post',
-				'url'         => admin_url( 'edit.php' ),
-				'cta'         => __( 'Gerenciar artigos', 'valle-branco-painel' ),
-				'count'       => $this->count_published( 'post' ),
-				'count_label' => __( 'publicados', 'valle-branco-painel' ),
-				'cap'         => 'edit_posts',
-			),
-			array(
-				'id'          => 'onde-encontrar',
-				'title'       => __( 'Mapa', 'valle-branco-painel' ),
-				'description' => __( 'Gerencie estabelecimentos, produtos no mapa e pontos de venda.', 'valle-branco-painel' ),
-				'icon'        => 'dashicons-location-alt',
-				'url'         => admin_url( 'admin.php?page=vb-onde-encontrar' ),
-				'cta'         => __( 'Abrir mapa', 'valle-branco-painel' ),
-				'count'       => $this->count_published( 'vb_estabelecimento' ),
-				'count_label' => __( 'estabelecimentos', 'valle-branco-painel' ),
-				'cap'         => 'manage_options',
-			),
-			array(
 				'id'          => 'hero-sliders',
 				'title'       => __( 'Banners', 'valle-branco-painel' ),
 				'description' => __( 'Configure os banners principais da home e de outras páginas.', 'valle-branco-painel' ),
@@ -249,8 +257,30 @@ class VB_Painel_Admin {
 				'cap'         => 'edit_posts',
 			),
 			array(
+				'id'          => 'posts',
+				'title'       => __( 'Artigos/Receitas', 'valle-branco-painel' ),
+				'description' => __( 'Publique e edite artigos, receitas e conteúdos do site.', 'valle-branco-painel' ),
+				'icon'        => 'dashicons-admin-post',
+				'url'         => admin_url( 'edit.php' ),
+				'cta'         => __( 'Gerenciar artigos', 'valle-branco-painel' ),
+				'count'       => $this->count_published( 'post' ),
+				'count_label' => __( 'publicados', 'valle-branco-painel' ),
+				'cap'         => 'edit_posts',
+			),
+			array(
+				'id'          => 'onde-encontrar',
+				'title'       => __( 'Mapa', 'valle-branco-painel' ),
+				'description' => __( 'Gerencie estabelecimentos, produtos no mapa e pontos de venda.', 'valle-branco-painel' ),
+				'icon'        => 'dashicons-location-alt',
+				'url'         => admin_url( 'admin.php?page=vb-onde-encontrar' ),
+				'cta'         => __( 'Abrir mapa', 'valle-branco-painel' ),
+				'count'       => $this->count_cidades_ativas_mapa(),
+				'count_label' => __( 'cidades ativas', 'valle-branco-painel' ),
+				'cap'         => 'manage_options',
+			),
+			array(
 				'id'          => 'usuarios',
-				'title'       => __( 'Usuários', 'valle-branco-painel' ),
+				'title'       => __( 'Usuários do Site', 'valle-branco-painel' ),
 				'description' => __( 'Adicione, edite e gerencie quem tem acesso ao painel do site.', 'valle-branco-painel' ),
 				'icon'        => 'dashicons-groups',
 				'url'         => admin_url( 'users.php' ),
@@ -315,6 +345,71 @@ class VB_Painel_Admin {
 	private function count_users_total() {
 		$counts = count_users();
 		return isset( $counts['total_users'] ) ? (int) $counts['total_users'] : 0;
+	}
+
+	/**
+	 * Cidades distintas ativas no mapa (mesmo critério do front):
+	 * estabelecimento publicado, com lat/lng e produto ativo recente.
+	 *
+	 * @return int
+	 */
+	private function count_cidades_ativas_mapa() {
+		global $wpdb;
+
+		if ( ! post_type_exists( 'vb_estabelecimento' ) ) {
+			return 0;
+		}
+
+		$tabela = $wpdb->prefix . 'vb_produto_local';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$existe = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $tabela ) );
+		if ( $existe !== $tabela ) {
+			return 0;
+		}
+
+		$where_extra = '';
+		$params      = array();
+
+		if ( class_exists( 'VB_OE_Database' ) ) {
+			$limite = VB_OE_Database::data_limite_mapa();
+			if ( $limite ) {
+				$where_extra = ' AND r.data_atualizacao >= %s';
+				$params[]    = $limite;
+			}
+		}
+
+		// Parte da tabela de relações (mais seletiva) e conta cidades distintas.
+		$sql = "SELECT COUNT(*) FROM (
+				SELECT DISTINCT cidade.meta_value AS cidade
+				FROM {$tabela} r
+				INNER JOIN {$wpdb->posts} e
+					ON e.ID = r.estabelecimento_id
+					AND e.post_type = 'vb_estabelecimento'
+					AND e.post_status = 'publish'
+				INNER JOIN {$wpdb->postmeta} cidade
+					ON cidade.post_id = e.ID
+					AND cidade.meta_key = '_vb_cidade'
+					AND cidade.meta_value <> ''
+				INNER JOIN {$wpdb->postmeta} lat
+					ON lat.post_id = e.ID
+					AND lat.meta_key = '_vb_lat'
+					AND lat.meta_value <> ''
+				INNER JOIN {$wpdb->postmeta} lng
+					ON lng.post_id = e.ID
+					AND lng.meta_key = '_vb_lng'
+					AND lng.meta_value <> ''
+				WHERE r.status = 'ativo'{$where_extra}
+			) AS cidades_ativas";
+
+		if ( ! empty( $params ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$count = $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
+		} else {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$count = $wpdb->get_var( $sql );
+		}
+
+		return (int) $count;
 	}
 
 	/**

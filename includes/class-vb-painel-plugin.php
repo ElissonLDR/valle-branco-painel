@@ -18,10 +18,6 @@ class VB_Painel_Plugin {
 	 * Liga módulos.
 	 */
 	public function run() {
-		if ( ! is_admin() ) {
-			return;
-		}
-
 		$admin = new VB_Painel_Admin();
 		$admin->hooks();
 	}
