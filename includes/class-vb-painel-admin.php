@@ -293,6 +293,17 @@ class VB_Painel_Admin {
 				'cap'         => 'edit_posts',
 			),
 			array(
+				'id'          => 'midia-kit',
+				'title'       => __( 'Mídia Kit', 'valle-branco-painel' ),
+				'description' => __( 'Adicione e altere produtos, nomes e imagens do mídia kit.', 'valle-branco-painel' ),
+				'icon'        => 'dashicons-download',
+				'url'         => admin_url( 'edit.php?post_type=vb_mk_item' ),
+				'cta'         => __( 'Gerenciar mídia kit', 'valle-branco-painel' ),
+				'count'       => $this->count_published( 'vb_mk_item' ),
+				'count_label' => __( 'itens', 'valle-branco-painel' ),
+				'cap'         => 'edit_posts',
+			),
+			array(
 				'id'          => 'posts',
 				'title'       => __( 'Artigos/Receitas', 'valle-branco-painel' ),
 				'description' => __( 'Publique e edite artigos, receitas e conteúdos do site.', 'valle-branco-painel' ),
